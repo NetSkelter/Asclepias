@@ -32,8 +32,12 @@ namespace ASC {
 			return false;
 		}
 		inst_ = new App;
-		
+
+		inst_->log_.init(conf.log.console, conf.log.fileNames, conf.log.timestampFmt);
+		ASCLOG(App, Info, "Initialized logging system.");
+
 		inst_->scene_ = &conf.startScene;
+		return true;
 	}
 
 	void App::SetScene(Scene& scene) {
@@ -53,6 +57,7 @@ namespace ASC {
 			}
 			inst_->scene_ = &scene;
 		}
+		ASCLOG(App, Info, "Set to scene at ", &scene, ".");
 	}
 
 	void App::Run() {
@@ -66,6 +71,9 @@ namespace ASC {
 		}
 		inst_->scenes_.clear();
 		inst_->scene_ = 0;
+
+		ASCLOG(App, Info, "Destroying logging system.");
+		inst_->log_.destroy();
 
 		delete inst_;
 	}

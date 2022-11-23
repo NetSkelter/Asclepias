@@ -137,9 +137,11 @@
   <ItemGroup>
     <ClCompile Include="..\Vendor\source\picopng.cpp" />
     <ClCompile Include="Asclepias.cpp" />
+    <ClCompile Include="Logging.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asclepias.h" />
+    <ClInclude Include="Logging.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

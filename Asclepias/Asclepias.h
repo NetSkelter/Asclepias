@@ -7,7 +7,7 @@
 #ifndef ASC_ASCLEPIAS_H
 #define ASC_ASCLEPIAS_H
 
-#include <vector>
+#include "Logging.h"
 
 namespace ASC {
 	class Scene {
@@ -32,6 +32,16 @@ namespace ASC {
 	class App {
 	public:
 		struct Config {
+			struct Log {
+				bool console
+#ifdef _DEBUG
+					= true;
+#else
+					= false;
+#endif
+				std::vector<std::string> fileNames = { "ASC.log" };
+				std::string timestampFmt = "%Y.%m.%d.%H%M.%S";
+			} log;
 			Scene& startScene;
 
 			Config(Scene&);
@@ -40,9 +50,13 @@ namespace ASC {
 		static void SetScene(Scene&);
 		static void Run();
 		static void Destroy();
+		inline static LogManager& log() {
+			return inst_->log_;
+		}
 
 	private:
 		static App* inst_;
+		LogManager log_;
 		std::vector<Scene*> scenes_;
 		Scene* scene_ = 0;
 

@@ -9,12 +9,12 @@
 #include "SandBox.h"
 
 bool TestScene::init() {
-	std::cout << "Initialized test scene." << std::endl;
+	ASCLOG(TS, Info, "Initializing test scene.");
 	return true;
 }
 
 void TestScene::enter(Scene& prev) {
-	std::cout << "Entered test scene from " << &prev << "." << std::endl;
+	ASCLOG(TS, Info, "Entered from scene ", &prev, ".");
 }
 
 void TestScene::draw() {
@@ -34,11 +34,11 @@ void TestScene::update(float dt) {
 }
 
 void TestScene::leave(Scene& next) {
-	std::cout << "Left test scene for " << &next << "." << std::endl;
+	ASCLOG(TS, Info, "Left for scene ", &next, ".");
 }
 
 void TestScene::destroy() {
-	std::cout << "Destroyed test scene." << std::endl;
+	ASCLOG(TS, Info, "Destroying test scene.");
 }
 
 TestScene SandBox::TS;
