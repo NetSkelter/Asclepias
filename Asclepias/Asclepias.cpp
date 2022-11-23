@@ -36,6 +36,12 @@ namespace ASC {
 		inst_->log_.init(conf.log.console, conf.log.fileNames, conf.log.timestampFmt);
 		ASCLOG(App, Info, "Initialized logging system.");
 
+		if (!inst_->window_.init(conf.window.dims, conf.window.title, conf.window.fullscreen)) {
+			ASCLOG(App, Error, "Failed to initialize windowing module.");
+			return false;
+		}
+		ASCLOG(App, Info, "Initialized window.");
+
 		inst_->scene_ = &conf.startScene;
 		return true;
 	}
@@ -62,6 +68,16 @@ namespace ASC {
 
 	void App::Run() {
 		SetScene(*inst_->scene_);
+
+		double start = glfwGetTime();
+		while (inst_->window_.update()) {
+			if (glfwGetTime() - start > 30.0) {
+				break;
+			}
+			if (!inst_->scene_->processInput()) {
+				break;
+			}
+		}
 	}
 
 	void App::Destroy() {
@@ -71,6 +87,9 @@ namespace ASC {
 		}
 		inst_->scenes_.clear();
 		inst_->scene_ = 0;
+
+		ASCLOG(App, Info, "Destroying window.");
+		inst_->window_.destroy();
 
 		ASCLOG(App, Info, "Destroying logging system.");
 		inst_->log_.destroy();

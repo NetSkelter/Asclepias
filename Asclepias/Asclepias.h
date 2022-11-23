@@ -8,6 +8,7 @@
 #define ASC_ASCLEPIAS_H
 
 #include "Logging.h"
+#include "Windowing.h"
 
 namespace ASC {
 	class Scene {
@@ -18,7 +19,7 @@ namespace ASC {
 		virtual bool init() = 0;
 		virtual void enter(Scene&) = 0;
 		virtual void draw() = 0;
-		virtual void processInput() = 0;
+		virtual bool processInput() = 0;
 		virtual void cmpEvent(int, int, int) = 0;
 		virtual void update(float) = 0;
 		virtual void leave(Scene&) = 0;
@@ -42,6 +43,11 @@ namespace ASC {
 				std::vector<std::string> fileNames = { "ASC.log" };
 				std::string timestampFmt = "%Y.%m.%d.%H%M.%S";
 			} log;
+			struct Window {
+				glm::ivec2 dims = glm::ivec2(800, 600);
+				std::string title = "Asclepias";
+				bool fullscreen = false;
+			} window;
 			Scene& startScene;
 
 			Config(Scene&);
@@ -50,13 +56,17 @@ namespace ASC {
 		static void SetScene(Scene&);
 		static void Run();
 		static void Destroy();
-		inline static LogManager& log() {
+		inline static LogMgr& log() {
 			return inst_->log_;
+		}
+		inline static WindowMgr& window() {
+			return inst_->window_;
 		}
 
 	private:
 		static App* inst_;
-		LogManager log_;
+		LogMgr log_;
+		WindowMgr window_;
 		std::vector<Scene*> scenes_;
 		Scene* scene_ = 0;
 

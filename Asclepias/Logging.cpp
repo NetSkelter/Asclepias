@@ -7,7 +7,7 @@
 #include "Asclepias.h"
 
 namespace ASC {
-	void LogManager::init(bool console, const std::vector<std::string>& fileNames,
+	void LogMgr::init(bool console, const std::vector<std::string>& fileNames,
 		const std::string& timestampFmt) {
 		console_ = console;
 		for (const std::string& fileName : fileNames) {
@@ -16,7 +16,7 @@ namespace ASC {
 		timestampFmt_ = timestampFmt;
 	}
 
-	const std::string LogManager::getTimestamp() const {
+	const std::string LogMgr::getTimestamp() const {
 		struct tm t;
 		__time64_t lt;
 		char buffer[64];
@@ -30,7 +30,7 @@ namespace ASC {
 		return std::string(buffer);
 	}
 
-	void LogManager::destroy() {
+	void LogMgr::destroy() {
 #ifdef _DEBUG
 		console_ = true;
 #else

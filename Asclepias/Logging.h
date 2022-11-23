@@ -16,7 +16,7 @@
 	": [", #SRC, "] [", #LVL, "] ", __VA_ARGS__, "\n"
 
 namespace ASC {
-	class LogManager {
+	class LogMgr {
 	public:
 		void init(bool, const std::vector<std::string>&, const std::string&);
 		template <typename T>
@@ -45,7 +45,7 @@ namespace ASC {
 	};
 
 	template<typename T>
-	LogManager& operator , (LogManager& log, const T& t) {
+	LogMgr& operator , (LogMgr& log, const T& t) {
 		log.write(t);
 		return log;
 	}
