@@ -20,14 +20,40 @@ void TestScene1::draw() {
 }
 
 bool TestScene1::processInput() {
-	if (App::input().isKeyDown(ASC_KEY_5)) {
-		ASCLOG(TS1, Info, "5 key is down.");
+	if (App::input().isKeyPressed(ASC_KEY_E)) {
+		App::input().setMouseEnabled(!App::input().isMouseEnabled());
+		if (App::input().isMouseEnabled()) {
+			ASCLOG(TS1, Info, "Mouse enabled.");
+		}
+		else {
+			ASCLOG(TS1, Info, "Mouse disabled.");
+		}
 	}
-	if (App::input().isKeyPressed(ASC_CTL_L_SHIFT)) {
-		ASCLOG(TS1, Info, "Left shift pressed.");
+	if (App::input().isKeyPressed(ASC_KEY_V)) {
+		App::input().setMouseVisible(!App::input().isMouseVisible());
+		if (App::input().isMouseVisible()) {
+			ASCLOG(TS1, Info, "Mouse visible.");
+		}
+		else {
+			ASCLOG(TS1, Info, "Mouse invisible.");
+		}
 	}
-	if (App::input().isKeyReleased(ASC_SYM_APOSTROPHE)) {
-		ASCLOG(TS1, Info, "Apostrophe released.");
+	if (App::input().isMouseMoved()) {
+		glm::vec2 mp = App::input().getMousePos();
+		ASCLOG(TS1, Info, "Mouse moved (", mp.x, ", ", mp.y, ").");
+	}
+	if (App::input().isMouseBtnDown(ASC_MB_LEFT)) {
+		ASCLOG(TS1, Info, "Left mouse button down.");
+	}
+	if (App::input().isMouseBtnPressed(ASC_MB_RIGHT)) {
+		ASCLOG(TS1, Info, "Right mouse button pressed.");
+	}
+	if (App::input().isMouseBtnReleased(ASC_MB_RIGHT)) {
+		ASCLOG(TS1, Info, "Right mouse button released.");
+	}
+	if (App::input().isMouseScrolled()) {
+		glm::vec2 ms = App::input().getMouseScroll();
+		ASCLOG(TS1, Info, "Mouse scrolled (", ms.x, ", ", ms.y, ").");
 	}
 
 	if (App::input().isKeyPressed(ASC_KEY_2)) {

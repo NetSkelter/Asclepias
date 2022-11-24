@@ -42,14 +42,18 @@ void TestScene2::destroy() {
 	ASCLOG(TS2, Info, "Destroyed test scene 2.");
 }
 
-void TestScene2::keyPressed(int key) {
-	ASCLOG(TS2, Info, "Key ", key, " pressed.");
+void TestScene2::mouseMoved(const glm::vec2& pos) {
+	ASCLOG(TS2, Info, "Mouse moved (", pos.x, ", ", pos.y, ").");
 }
 
-void TestScene2::keyReleased(int key) {
-	ASCLOG(TS2, Info, "Key ", key, " released.");
+void TestScene2::mouseBtnPressed(int btn) {
+	ASCLOG(TS2, Info, "Mouse button ", btn, " pressed.");
 }
 
-void TestScene2::charTyped(char c) {
-	ASCLOG(TS2, Info, "Character ", c, " typed.");
+void TestScene2::mouseBtnReleased(int btn) {
+	ASCLOG(TS2, Info, "Mouse button ", btn, " released.");
+}
+
+void TestScene2::mouseScrolled(const glm::vec2& scroll) {
+	ASCLOG(TS2, Info, "Mouse scrolled (", scroll.x, ", ", scroll.y, ").");
 }

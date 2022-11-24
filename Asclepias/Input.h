@@ -68,6 +68,12 @@ namespace ASC {
 		ASC_CTL_R_SHIFT = GLFW_KEY_RIGHT_SHIFT, ASC_CTL_R_CTRL = GLFW_KEY_RIGHT_CONTROL,
 		ASC_CTL_R_ALT = GLFW_KEY_RIGHT_ALT, ASC_CTL_R_SUPER = GLFW_KEY_RIGHT_SUPER,
 		ASC_CTL_MENU = GLFW_KEY_MENU, ASC_CTL_LAST = GLFW_KEY_LAST,
+
+		ASC_MB_1 = GLFW_MOUSE_BUTTON_1, ASC_MB_2 = GLFW_MOUSE_BUTTON_2, ASC_MB_3 = GLFW_MOUSE_BUTTON_3,
+		ASC_MB_4 = GLFW_MOUSE_BUTTON_4, ASC_MB_5 = GLFW_MOUSE_BUTTON_5, ASC_MB_6 = GLFW_MOUSE_BUTTON_6,
+		ASC_MB_7 = GLFW_MOUSE_BUTTON_7, ASC_MB_8 = GLFW_MOUSE_BUTTON_8,
+		ASC_MB_LEFT = GLFW_MOUSE_BUTTON_LEFT, ASC_MB_MID = GLFW_MOUSE_BUTTON_MIDDLE,
+		ASC_MB_RIGHT = GLFW_MOUSE_BUTTON_RIGHT, ASC_MB_LAST = GLFW_MOUSE_BUTTON_LAST,
 	};
 
 	class InputLstr {
@@ -75,6 +81,10 @@ namespace ASC {
 		virtual void keyPressed(int) {}
 		virtual void keyReleased(int) {}
 		virtual void charTyped(char) {}
+		virtual void mouseMoved(const glm::vec2&) {}
+		virtual void mouseBtnPressed(int) {}
+		virtual void mouseBtnReleased(int) {}
+		virtual void mouseScrolled(const glm::vec2&) {}
 	};
 
 	class InputMgr {
@@ -91,17 +101,58 @@ namespace ASC {
 		inline bool isKeyReleased(int key) const {
 			return !isKeyDown(key) && wasKeyDown(key);
 		}
+		inline bool isMouseEnabled() const {
+			return mouseEnabled_;
+		}
+		void setMouseEnabled(bool);
+		inline bool isMouseVisible() const {
+			return mouseVisible_;
+		}
+		void setMouseVisible(bool);
+		inline bool isMouseMoved() const {
+			return mousePos_.first != mousePos_.second;
+		}
+		inline const glm::vec2& getMousePos() const {
+			return mousePos_.first;
+		}
+		bool isMouseBtnDown(int) const;
+		inline bool isMouseBtnPressed(int btn) const {
+			return isMouseBtnDown(btn) && !wasMouseBtnDown(btn);
+		}
+		inline bool isMouseBtnReleased(int btn) const {
+			return !isMouseBtnDown(btn) && wasMouseBtnDown(btn);
+		}
+		inline bool isMouseScrolled() const {
+			return (mouseScroll_.first != mouseScroll_.second)
+				&& (mouseScroll_.first != glm::vec2(0.0f, 0.0f));
+		}
+		inline const glm::vec2& getMouseScroll() const {
+			return mouseScroll_.first;
+		}
 
 	private:
 		std::vector<InputLstr*> lstrs_;
 		std::map<int, std::pair<bool, bool>> keys_;
+		bool mouseEnabled_ = true;
+		bool mouseVisible_ = true;
+		std::pair<glm::vec2, glm::vec2> mousePos_;
+		std::map<int, std::pair<bool, bool>> mouseBtns_;
+		std::pair<glm::vec2, glm::vec2> mouseScroll_;
 
 		bool wasKeyDown(int) const;
+		bool wasMouseBtnDown(int) const;
 		void pressKey(int);
 		void releaseKey(int);
 		void typeChar(char);
+		void moveMouse(const glm::vec2&);
+		void pressMouseBtn(int);
+		void releaseMouseBtn(int);
+		void scrollMouse(const glm::vec2&);
 		static void KeyEvent(GLFWwindow*, int, int, int, int);
 		static void CharEvent(GLFWwindow*, unsigned int);
+		static void MousePosEvent(GLFWwindow*, double, double);
+		static void MouseBtnEvent(GLFWwindow*, int, int, int);
+		static void MouseScrollEvent(GLFWwindow*, double, double);
 	};
 }
 
