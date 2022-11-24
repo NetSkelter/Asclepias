@@ -9,9 +9,10 @@
 
 #include "Logging.h"
 #include "Windowing.h"
+#include "Input.h"
 
 namespace ASC {
-	class Scene {
+	class Scene : public InputLstr {
 	protected:
 		friend class App;
 		
@@ -62,11 +63,15 @@ namespace ASC {
 		inline static WindowMgr& window() {
 			return inst_->window_;
 		}
+		inline static InputMgr& input() {
+			return inst_->input_;
+		}
 
 	private:
 		static App* inst_;
 		LogMgr log_;
 		WindowMgr window_;
+		InputMgr input_;
 		std::vector<Scene*> scenes_;
 		Scene* scene_ = 0;
 

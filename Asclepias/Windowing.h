@@ -33,6 +33,8 @@ namespace ASC {
 		void setMonitor(GLFWmonitor*);
 
 	private:
+		friend class InputMgr;
+
 		glm::ivec2 dims_ = glm::ivec2();
 		glm::ivec2 wDims_ = glm::ivec2();
 		std::string title_ = "";

@@ -42,6 +42,9 @@ namespace ASC {
 		}
 		ASCLOG(App, Info, "Initialized window.");
 
+		inst_->input_.init();
+		ASCLOG(App, Info, "Initialized input manager.");
+
 		inst_->scene_ = &conf.startScene;
 		return true;
 	}
@@ -52,6 +55,7 @@ namespace ASC {
 			inst_->scenes_.push_back(&scene);
 		}
 		if (inst_->scene_ != 0 && inst_->scene_ != &scene) {
+			inst_->input_.removeLstr(*inst_->scene_);
 			inst_->scene_->leave(scene);
 		}
 		if (scene.initScene()) {
@@ -61,6 +65,7 @@ namespace ASC {
 			else {
 				scene.enter(scene);
 			}
+			inst_->input_.addLstr(scene);
 			inst_->scene_ = &scene;
 		}
 		ASCLOG(App, Info, "Set to scene at ", &scene, ".");
@@ -69,11 +74,8 @@ namespace ASC {
 	void App::Run() {
 		SetScene(*inst_->scene_);
 
-		double start = glfwGetTime();
 		while (inst_->window_.update()) {
-			if (glfwGetTime() - start > 30.0) {
-				break;
-			}
+			inst_->input_.update();
 			if (!inst_->scene_->processInput()) {
 				break;
 			}
@@ -87,6 +89,9 @@ namespace ASC {
 		}
 		inst_->scenes_.clear();
 		inst_->scene_ = 0;
+
+		ASCLOG(App, Info, "Destroying input manager.");
+		inst_->input_.destroy();
 
 		ASCLOG(App, Info, "Destroying window.");
 		inst_->window_.destroy();

@@ -35,7 +35,6 @@ namespace ASC {
 
 	bool WindowMgr::update() {
 		glfwSwapBuffers(window_);
-		glfwPollEvents();
 		return !glfwWindowShouldClose(window_);
 	}
 

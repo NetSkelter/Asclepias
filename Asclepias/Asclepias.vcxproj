@@ -137,11 +137,13 @@
   <ItemGroup>
     <ClCompile Include="..\Vendor\source\picopng.cpp" />
     <ClCompile Include="Asclepias.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Windowing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asclepias.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="Windowing.h" />
   </ItemGroup>

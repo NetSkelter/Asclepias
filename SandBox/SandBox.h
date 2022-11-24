@@ -11,7 +11,7 @@
 
 using namespace ASC;
 
-class TestScene : public Scene {
+class TestScene1 : public Scene {
 public:
 	bool init() override;
 	void enter(Scene&) override;
@@ -21,15 +21,27 @@ public:
 	void update(float) override;
 	void leave(Scene&) override;
 	void destroy() override;
+};
 
-private:
-	double startTime_ = 0.0;
-	bool chSize_ = false, chTitle_ = false, chFullscreen_ = false, chFullscreen2_ = false;
+class TestScene2 : public Scene {
+public:
+	bool init() override;
+	void enter(Scene&) override;
+	void draw() override;
+	bool processInput() override;
+	void cmpEvent(int, int, int) override;
+	void update(float) override;
+	void leave(Scene&) override;
+	void destroy() override;
+	void keyPressed(int) override;
+	void keyReleased(int) override;
+	void charTyped(char) override;
 };
 
 class SandBox {
 public:
-	static TestScene TS;
+	static TestScene1 TS1;
+	static TestScene2 TS2;
 };
 
 #endif
