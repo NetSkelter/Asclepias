@@ -41,23 +41,3 @@ void TestScene2::leave(Scene& next) {
 void TestScene2::destroy() {
 	ASCLOG(TS2, Info, "Destroyed test scene 2.");
 }
-
-void TestScene2::ctrlConnected(int ctrl) {
-	ASCLOG(TS2, Info, "Controller ", ctrl, " connected.");
-}
-
-void TestScene2::ctrlDisconnected(int ctrl) {
-	ASCLOG(TS2, Info, "Controller ", ctrl, " disconnected.");
-}
-
-void TestScene2::ctrlBtnPressed(int ctrl, int btn) {
-	ASCLOG(TS2, Info, "Controller ", ctrl, " button ", btn, " pressed.");
-}
-
-void TestScene2::ctrlBtnReleased(int ctrl, int btn) {
-	ASCLOG(TS2, Info, "Controller ", ctrl, " button ", btn, " released.");
-}
-
-void TestScene2::ctrlAxisMoved(int ctrl, int axis, float pos) {
-	ASCLOG(TS2, Info, "Controller ", ctrl, " axis ", axis, " moved: ", pos, ".");
-}

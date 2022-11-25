@@ -45,6 +45,9 @@ namespace ASC {
 		inst_->input_.init();
 		ASCLOG(App, Info, "Initialized input manager.");
 
+		inst_->audio_.init(conf.audio.volume);
+		ASCLOG(App, Info, "Initialized audio manager.");
+
 		inst_->scene_ = &conf.startScene;
 		return true;
 	}
@@ -89,6 +92,9 @@ namespace ASC {
 		}
 		inst_->scenes_.clear();
 		inst_->scene_ = 0;
+
+		ASCLOG(App, Info, "Destroying audio manager.");
+		inst_->audio_.destroy();
 
 		ASCLOG(App, Info, "Destroying input manager.");
 		inst_->input_.destroy();

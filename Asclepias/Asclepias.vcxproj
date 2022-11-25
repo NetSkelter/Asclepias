@@ -111,6 +111,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings>4005;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +127,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings>4005;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,12 +139,14 @@
   <ItemGroup>
     <ClCompile Include="..\Vendor\source\picopng.cpp" />
     <ClCompile Include="Asclepias.cpp" />
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Windowing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asclepias.h" />
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="Windowing.h" />

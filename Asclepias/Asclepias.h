@@ -10,6 +10,7 @@
 #include "Logging.h"
 #include "Windowing.h"
 #include "Input.h"
+#include "Audio.h"
 
 namespace ASC {
 	class Scene : public InputLstr {
@@ -49,6 +50,9 @@ namespace ASC {
 				std::string title = "Asclepias";
 				bool fullscreen = false;
 			} window;
+			struct Audio {
+				float volume = 1.0f;
+			} audio;
 			Scene& startScene;
 
 			Config(Scene&);
@@ -66,12 +70,16 @@ namespace ASC {
 		inline static InputMgr& input() {
 			return inst_->input_;
 		}
+		inline static AudioMgr& audio() {
+			return inst_->audio_;
+		}
 
 	private:
 		static App* inst_;
 		LogMgr log_;
 		WindowMgr window_;
 		InputMgr input_;
+		AudioMgr audio_;
 		std::vector<Scene*> scenes_;
 		Scene* scene_ = 0;
 

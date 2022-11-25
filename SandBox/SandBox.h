@@ -33,11 +33,6 @@ public:
 	void update(float) override;
 	void leave(Scene&) override;
 	void destroy() override;
-	void ctrlConnected(int) override;
-	void ctrlDisconnected(int) override;
-	void ctrlBtnPressed(int, int) override;
-	void ctrlBtnReleased(int, int) override;
-	void ctrlAxisMoved(int, int, float) override;
 };
 
 class SandBox {
