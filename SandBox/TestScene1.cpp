@@ -20,40 +20,27 @@ void TestScene1::draw() {
 }
 
 bool TestScene1::processInput() {
-	if (App::input().isKeyPressed(ASC_KEY_E)) {
-		App::input().setMouseEnabled(!App::input().isMouseEnabled());
-		if (App::input().isMouseEnabled()) {
-			ASCLOG(TS1, Info, "Mouse enabled.");
-		}
-		else {
-			ASCLOG(TS1, Info, "Mouse disabled.");
+	if (App::input().isKeyPressed(ASC_KEY_L)) {
+		std::vector<int> ctrls = App::input().getCtrlIDs();
+		ASCLOG(TS1, Info, ctrls.size(), " controllers are connected.");
+		for (int ctrl : ctrls) {
+			ASCLOG(TS1, Info, "ID ", ctrl, " connected.");
 		}
 	}
-	if (App::input().isKeyPressed(ASC_KEY_V)) {
-		App::input().setMouseVisible(!App::input().isMouseVisible());
-		if (App::input().isMouseVisible()) {
-			ASCLOG(TS1, Info, "Mouse visible.");
+	if (App::input().isCtrlConnected(1)) {
+		if (App::input().isCtrlBtnDown(1, ASC_CB_A)) {
+			ASCLOG(TS1, Info, "Controller 1's A button is down.");
 		}
-		else {
-			ASCLOG(TS1, Info, "Mouse invisible.");
+		if (App::input().isCtrlBtnPressed(1, ASC_CB_B)) {
+			ASCLOG(TS1, Info, "Controller 1's B button is pressed.");
 		}
-	}
-	if (App::input().isMouseMoved()) {
-		glm::vec2 mp = App::input().getMousePos();
-		ASCLOG(TS1, Info, "Mouse moved (", mp.x, ", ", mp.y, ").");
-	}
-	if (App::input().isMouseBtnDown(ASC_MB_LEFT)) {
-		ASCLOG(TS1, Info, "Left mouse button down.");
-	}
-	if (App::input().isMouseBtnPressed(ASC_MB_RIGHT)) {
-		ASCLOG(TS1, Info, "Right mouse button pressed.");
-	}
-	if (App::input().isMouseBtnReleased(ASC_MB_RIGHT)) {
-		ASCLOG(TS1, Info, "Right mouse button released.");
-	}
-	if (App::input().isMouseScrolled()) {
-		glm::vec2 ms = App::input().getMouseScroll();
-		ASCLOG(TS1, Info, "Mouse scrolled (", ms.x, ", ", ms.y, ").");
+		if (App::input().isCtrlBtnReleased(1, ASC_CB_X)) {
+			ASCLOG(TS1, Info, "Controller 1's X button is released.");
+		}
+		if (App::input().isCtrlAxisMoved(1, ASC_CA_R_TRIGGER)) {
+			float ap = App::input().getCtrlAxisPos(1, ASC_CA_R_TRIGGER);
+			ASCLOG(TS1, Info, "Controller 1's right trigger has moved: ", ap, ".");
+		}
 	}
 
 	if (App::input().isKeyPressed(ASC_KEY_2)) {

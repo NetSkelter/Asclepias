@@ -74,6 +74,22 @@ namespace ASC {
 		ASC_MB_7 = GLFW_MOUSE_BUTTON_7, ASC_MB_8 = GLFW_MOUSE_BUTTON_8,
 		ASC_MB_LEFT = GLFW_MOUSE_BUTTON_LEFT, ASC_MB_MID = GLFW_MOUSE_BUTTON_MIDDLE,
 		ASC_MB_RIGHT = GLFW_MOUSE_BUTTON_RIGHT, ASC_MB_LAST = GLFW_MOUSE_BUTTON_LAST,
+
+		ASC_CB_A = GLFW_GAMEPAD_BUTTON_A, ASC_CB_B = GLFW_GAMEPAD_BUTTON_B,
+		ASC_CB_X = GLFW_GAMEPAD_BUTTON_X, ASC_CB_Y = GLFW_GAMEPAD_BUTTON_Y,
+		ASC_CB_CROSS = GLFW_GAMEPAD_BUTTON_CROSS, ASC_CB_CIRCLE = GLFW_GAMEPAD_BUTTON_CIRCLE,
+		ASC_CB_SQUARE = GLFW_GAMEPAD_BUTTON_SQUARE, ASC_CB_TRIANGLE = GLFW_GAMEPAD_BUTTON_TRIANGLE,
+		ASC_CB_L_BUMPER = GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, ASC_CB_R_BUMPER = GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,
+		ASC_CB_L_THUMB = GLFW_GAMEPAD_BUTTON_LEFT_THUMB, ASC_CB_R_THUMB = GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,
+		ASC_CB_DP_UP = GLFW_GAMEPAD_BUTTON_DPAD_UP, ASC_CB_DP_DOWN = GLFW_GAMEPAD_BUTTON_DPAD_DOWN,
+		ASC_CB_DP_LEFT = GLFW_GAMEPAD_BUTTON_DPAD_LEFT, ASC_CB_DP_RIGHT = GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,
+		ASC_CB_BACK = GLFW_GAMEPAD_BUTTON_BACK, ASC_CB_START = GLFW_GAMEPAD_BUTTON_START,
+		ASC_CB_GUIDE = GLFW_GAMEPAD_BUTTON_GUIDE, ASC_CB_LAST = GLFW_GAMEPAD_BUTTON_LAST,
+
+		ASC_CA_L_STICK_X = GLFW_GAMEPAD_AXIS_LEFT_X, ASC_CA_L_STICK_Y = GLFW_GAMEPAD_AXIS_LEFT_Y,
+		ASC_CA_R_STICK_X = GLFW_GAMEPAD_AXIS_RIGHT_X, ASC_CA_R_STICK_Y = GLFW_GAMEPAD_AXIS_RIGHT_Y,
+		ASC_CA_L_TRIGGER = GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, ASC_CA_R_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
+		ASC_CA_LAST = GLFW_GAMEPAD_AXIS_LAST,
 	};
 
 	class InputLstr {
@@ -85,6 +101,11 @@ namespace ASC {
 		virtual void mouseBtnPressed(int) {}
 		virtual void mouseBtnReleased(int) {}
 		virtual void mouseScrolled(const glm::vec2&) {}
+		virtual void ctrlConnected(int) {}
+		virtual void ctrlDisconnected(int) {}
+		virtual void ctrlBtnPressed(int, int) {}
+		virtual void ctrlBtnReleased(int, int) {}
+		virtual void ctrlAxisMoved(int, int, float) {}
 	};
 
 	class InputMgr {
@@ -129,6 +150,17 @@ namespace ASC {
 		inline const glm::vec2& getMouseScroll() const {
 			return mouseScroll_.first;
 		}
+		std::vector<int> getCtrlIDs() const;
+		bool isCtrlConnected(int) const;
+		bool isCtrlBtnDown(int, int) const;
+		inline bool isCtrlBtnPressed(int ctrl, int btn) const {
+			return isCtrlBtnDown(ctrl, btn) && !wasCtrlBtnDown(ctrl, btn);
+		}
+		inline bool isCtrlBtnReleased(int ctrl, int btn) const {
+			return !isCtrlBtnDown(ctrl, btn) && wasCtrlBtnDown(ctrl, btn);
+		}
+		bool isCtrlAxisMoved(int, int) const;
+		float getCtrlAxisPos(int, int) const;
 
 	private:
 		std::vector<InputLstr*> lstrs_;
@@ -138,9 +170,12 @@ namespace ASC {
 		std::pair<glm::vec2, glm::vec2> mousePos_;
 		std::map<int, std::pair<bool, bool>> mouseBtns_;
 		std::pair<glm::vec2, glm::vec2> mouseScroll_;
+		std::map<int, std::pair<GLFWgamepadstate, GLFWgamepadstate>> ctrls_;
+		std::vector<int> removedCtrls_;
 
 		bool wasKeyDown(int) const;
 		bool wasMouseBtnDown(int) const;
+		bool wasCtrlBtnDown(int, int) const;
 		void pressKey(int);
 		void releaseKey(int);
 		void typeChar(char);
@@ -148,11 +183,14 @@ namespace ASC {
 		void pressMouseBtn(int);
 		void releaseMouseBtn(int);
 		void scrollMouse(const glm::vec2&);
+		void connectCtrl(int);
+		void disconnectCtrl(int);
 		static void KeyEvent(GLFWwindow*, int, int, int, int);
 		static void CharEvent(GLFWwindow*, unsigned int);
 		static void MousePosEvent(GLFWwindow*, double, double);
 		static void MouseBtnEvent(GLFWwindow*, int, int, int);
 		static void MouseScrollEvent(GLFWwindow*, double, double);
+		static void CtrlEvent(int, int);
 	};
 }
 

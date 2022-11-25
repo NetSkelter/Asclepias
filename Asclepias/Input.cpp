@@ -13,6 +13,18 @@ namespace ASC {
 		glfwSetCursorPosCallback(App::window().window_, MousePosEvent);
 		glfwSetMouseButtonCallback(App::window().window_, MouseBtnEvent);
 		glfwSetScrollCallback(App::window().window_, MouseScrollEvent);
+		glfwSetJoystickCallback(CtrlEvent);
+		ASCLOG(Input, Info, "Added GLFW callback functions.");
+		unsigned int count = 0;
+		for (int j = 0; j <= GLFW_JOYSTICK_LAST; j++) {
+			if (glfwJoystickPresent(j) == GLFW_TRUE) {
+				if (glfwJoystickIsGamepad(j) == GLFW_TRUE) {
+					connectCtrl(j);
+					count++;
+				}
+			}
+		}
+		ASCLOG(Input, Info, "Added ", count, " pre-connected controllers.");
 	}
 
 	void InputMgr::update() {
@@ -26,6 +38,43 @@ namespace ASC {
 		mouseScroll_.second = mouseScroll_.first;
 		mouseScroll_.first = glm::vec2(0.0f, 0.0f);
 		glfwPollEvents();
+		while (!removedCtrls_.empty()) {
+			int rc = removedCtrls_.back();
+			removedCtrls_.pop_back();
+			std::map<int, std::pair<GLFWgamepadstate, GLFWgamepadstate>>::iterator it = ctrls_.find(rc);
+			if (it != ctrls_.end()) {
+				ctrls_.erase(it);
+			}
+		}
+		removedCtrls_.clear();
+		for (std::pair<const int, std::pair<GLFWgamepadstate, GLFWgamepadstate>>& c : ctrls_) {
+			if (!glfwJoystickPresent(c.first)) {
+				continue;
+			}
+			c.second.second = c.second.first;
+			glfwGetGamepadState(c.first, &c.second.first);
+			for (int b = 0; b <= GLFW_GAMEPAD_BUTTON_LAST; b++) {
+				if (c.second.first.buttons[b] != c.second.second.buttons[b]) {
+					if (c.second.first.buttons[b] == GLFW_PRESS) {
+						for (InputLstr* lstr : lstrs_) {
+							lstr->ctrlBtnPressed(c.first, b);
+						}
+					}
+					else if (c.second.first.buttons[b] == GLFW_RELEASE) {
+						for (InputLstr* lstr : lstrs_) {
+							lstr->ctrlBtnReleased(c.first, b);
+						}
+					}
+				}
+			}
+			for (int a = 0; a <= GLFW_GAMEPAD_AXIS_LAST; a++) {
+				if (c.second.first.axes[a] != c.second.second.axes[a]) {
+					for (InputLstr* lstr : lstrs_) {
+						lstr->ctrlAxisMoved(c.first, a, c.second.first.axes[a]);
+					}
+				}
+			}
+		}
 	}
 
 	bool InputMgr::addLstr(InputLstr& lstr) {
@@ -51,6 +100,8 @@ namespace ASC {
 		lstrs_.clear();
 		keys_.clear();
 		mouseBtns_.clear();
+		ctrls_.clear();
+		removedCtrls_.clear();
 	}
 
 	bool InputMgr::isKeyDown(int key) const {
@@ -102,6 +153,50 @@ namespace ASC {
 		return mouseBtns_.at(btn).first;
 	}
 
+	std::vector<int> InputMgr::getCtrlIDs() const {
+		std::vector<int> ctrls;
+		for (int j = 0; j < GLFW_JOYSTICK_LAST; j++) {
+			if (isCtrlConnected(j)) {
+				ctrls.push_back(j);
+			}
+		}
+		return ctrls;
+	}
+
+	bool InputMgr::isCtrlConnected(int ctrl) const {
+		return ctrls_.find(ctrl) != ctrls_.end();
+	}
+
+	bool InputMgr::isCtrlBtnDown(int ctrl, int btn) const {
+		if (ctrls_.find(ctrl) == ctrls_.end()) {
+			return false;
+		}
+		if (btn < 0 || btn > GLFW_GAMEPAD_BUTTON_LAST) {
+			return false;
+		}
+		return ctrls_.at(ctrl).first.buttons[btn] == GLFW_PRESS;
+	}
+
+	bool InputMgr::isCtrlAxisMoved(int ctrl, int axis) const {
+		if (ctrls_.find(ctrl) == ctrls_.end()) {
+			return false;
+		}
+		if (axis < 0 || axis > GLFW_GAMEPAD_AXIS_LAST) {
+			return false;
+		}
+		return ctrls_.at(ctrl).first.axes[axis] != ctrls_.at(ctrl).second.axes[axis];
+	}
+
+	float InputMgr::getCtrlAxisPos(int ctrl, int axis) const {
+		if (ctrls_.find(ctrl) == ctrls_.end()) {
+			return false;
+		}
+		if (axis < 0 || axis > GLFW_GAMEPAD_AXIS_LAST) {
+			return false;
+		}
+		return ctrls_.at(ctrl).first.axes[axis];
+	}
+
 	bool InputMgr::wasKeyDown(int key) const {
 		if (keys_.find(key) == keys_.end()) {
 			return false;
@@ -114,6 +209,16 @@ namespace ASC {
 			return false;
 		}
 		return mouseBtns_.at(btn).second;
+	}
+
+	bool InputMgr::wasCtrlBtnDown(int ctrl, int btn) const {
+		if (ctrls_.find(ctrl) == ctrls_.end()) {
+			return false;
+		}
+		if (btn < 0 || btn > GLFW_GAMEPAD_BUTTON_LAST) {
+			return false;
+		}
+		return ctrls_.at(ctrl).second.buttons[btn] == GLFW_PRESS;
 	}
 
 	void InputMgr::pressKey(int key) {
@@ -188,6 +293,31 @@ namespace ASC {
 		}
 	}
 
+	void InputMgr::connectCtrl(int ctrl) {
+		if (!glfwJoystickIsGamepad(ctrl)) {
+			return;
+		}
+		if (ctrls_.find(ctrl) != ctrls_.end()) {
+			return;
+		}
+		ctrls_[ctrl] = std::pair<GLFWgamepadstate, GLFWgamepadstate>();
+		glfwGetGamepadState(ctrl, &ctrls_[ctrl].first);
+		glfwGetGamepadState(ctrl, &ctrls_[ctrl].second);
+		for (InputLstr* lstr : lstrs_) {
+			lstr->ctrlConnected(ctrl);
+		}
+	}
+
+	void InputMgr::disconnectCtrl(int ctrl) {
+		if (ctrls_.find(ctrl) == ctrls_.end()) {
+			return;
+		}
+		for (InputLstr* lstr : lstrs_) {
+			lstr->ctrlDisconnected(ctrl);
+		}
+		removedCtrls_.push_back(ctrl);
+	}
+
 	void InputMgr::KeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods) {
 		if (action == GLFW_PRESS) {
 			App::input().pressKey(key);
@@ -216,5 +346,14 @@ namespace ASC {
 
 	void InputMgr::MouseScrollEvent(GLFWwindow* window, double x, double y) {
 		App::input().scrollMouse(glm::vec2(x, y));
+	}
+
+	void InputMgr::CtrlEvent(int jid, int event) {
+		if (event == GLFW_CONNECTED) {
+			App::input().connectCtrl(jid);
+		}
+		else if (event == GLFW_DISCONNECTED) {
+			App::input().disconnectCtrl(jid);
+		}
 	}
 }

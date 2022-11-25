@@ -33,10 +33,11 @@ public:
 	void update(float) override;
 	void leave(Scene&) override;
 	void destroy() override;
-	void mouseMoved(const glm::vec2&) override;
-	void mouseBtnPressed(int) override;
-	void mouseBtnReleased(int) override;
-	void mouseScrolled(const glm::vec2&) override;
+	void ctrlConnected(int) override;
+	void ctrlDisconnected(int) override;
+	void ctrlBtnPressed(int, int) override;
+	void ctrlBtnReleased(int, int) override;
+	void ctrlAxisMoved(int, int, float) override;
 };
 
 class SandBox {
