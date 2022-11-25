@@ -12,6 +12,8 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include <ft2build.h>
+#include <freetype/freetype.h>
 
 namespace ASC {
 	class Entity {
@@ -90,6 +92,24 @@ namespace ASC {
 		bool playing_ = false;
 		float timer_ = 0.0f;
 		unsigned int frame_ = 0;
+	};
+
+	enum Alignment {
+		ASC_ALIGN_LEFT, ASC_ALIGN_RIGHT, ASC_ALIGN_BOTTOM, ASC_ALIGN_TOP, ASC_ALIGN_CENTER,
+		ASC_ALIGN_NONE,
+	};
+
+	class Glyph : public Sprite {
+	public:
+		glm::ivec2 bearing = glm::ivec2();
+		unsigned int offset = 0;
+	};
+
+	class Font {
+	public:
+		float minBearing = 0.0f;
+		float maxBearing = 0.0f;
+		std::map<char, Glyph> glyphs;
 	};
 }
 

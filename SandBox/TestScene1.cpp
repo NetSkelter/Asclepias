@@ -8,8 +8,8 @@
 
 bool TestScene1::init() {
 	ASCLOG(TS1, Info, "Initializing test scene 1.");
-	s_.init(glm::vec3(0.0f, 0.0f, -0.1f), glm::vec2(100.0f, 100.0f),
-		App::renderer().getTexture("Assets/texture/player.png"));
+	s_.init(glm::vec3(0.0f, 0.0f, -0.1f), glm::vec2(300.0f, 100.0f),
+		App::renderer().getTexture("Assets/texture/anim1.png"));
 	return true;
 }
 
@@ -20,6 +20,9 @@ void TestScene1::enter(Scene& prev) {
 void TestScene1::draw() {
 	App::renderer().submit(anims_);
 	App::renderer().submit(s_);
+	App::renderer().submit("Hello World!!!", glm::vec3(0.0f, 0.0f, 0.2f),
+		glm::vec4(0.0f, 0.0f, 300.0f, 100.0f), 0.5f, glm::vec3(1.0f, 1.0f, 0.0f),
+		App::renderer().getFont("Assets/font/arial.ttf"), ASC_ALIGN_CENTER, ASC_ALIGN_CENTER);
 }
 
 bool TestScene1::processInput() {
@@ -65,25 +68,6 @@ bool TestScene1::processInput() {
 	}
 	else {
 		App::renderer().getShader().getCamera().scaleVel = 0.0f;
-	}
-
-	if (App::input().isKeyDown(ASC_CTL_RIGHT)) {
-		s_.vel.x = 2.0f;
-	}
-	else if (App::input().isKeyDown(ASC_CTL_LEFT)) {
-		s_.vel.x = -2.0f;
-	}
-	else {
-		s_.vel.x = 0.0f;
-	}
-	if (App::input().isKeyDown(ASC_CTL_UP)) {
-		s_.vel.y = 2.0f;
-	}
-	else if (App::input().isKeyDown(ASC_CTL_DOWN)) {
-		s_.vel.y = -2.0f;
-	}
-	else {
-		s_.vel.y = 0.0f;
 	}
 
 	if (App::input().isKeyPressed(ASC_KEY_2)) {

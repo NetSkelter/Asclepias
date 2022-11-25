@@ -40,6 +40,7 @@ namespace ASC {
 	class Renderer {
 	public:
 		static GLuint NO_TEXTURE;
+		static Font NO_FONT;
 
 		bool init(const glm::vec3&);
 		void update(float);
@@ -67,11 +68,16 @@ namespace ASC {
 		void submit(std::vector<T>& sprites) {
 			submit(sprites, defaultShader_);
 		}
+		void submit(const std::string&, const glm::vec3&, const glm::vec4&, float, const glm::vec3&,
+			const Font&, Alignment, Alignment, Shader&);
+		void submit(const std::string&, const glm::vec3&, const glm::vec4&, float, const glm::vec3&,
+			const Font&, Alignment, Alignment);
 		inline void dump() {
 			dump_ = true;
 		}
 		void end();
 		const GLuint getTexture(const std::string&);
+		const Font& getFont(const std::string&);
 		void destroy();
 		inline Shader& getShader() {
 			return defaultShader_;
@@ -86,6 +92,9 @@ namespace ASC {
 		GLuint VBO_ = 0;
 		GLuint IBO_ = 0;
 		std::map<std::string, GLuint> textures_;
+		std::map<std::string, Font> fonts_;
+		FT_Library freeType_ = 0;
+		std::map<Shader*, std::vector<Glyph>> glyphs_;
 		std::vector<std::pair<Shader*, Sprite*>> sprites_;
 		Shader defaultShader_;
 
