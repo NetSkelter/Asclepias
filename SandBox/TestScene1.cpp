@@ -8,8 +8,16 @@
 
 bool TestScene1::init() {
 	ASCLOG(TS1, Info, "Initializing test scene 1.");
-	s_.init(glm::vec3(0.0f, 0.0f, -0.1f), glm::vec2(300.0f, 100.0f),
-		App::renderer().getTexture("Assets/texture/anim1.png"));
+	UI_.init(*this, 0, App::renderer().getShader(), App::renderer().getFont("Assets/font/arial.ttf"));
+	label1_.init(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.25f, 0.15f),
+		App::renderer().getTexture("Assets/texture/anim1.png"), "The first label!", 0.5f,
+		glm::vec3(1.0f, 1.0f, 0.0f), ASC_ALIGN_RIGHT, ASC_ALIGN_CENTER);
+	UI_.addCmpt(label1_);
+	label2_.init(glm::vec3(-0.45f, 0.0f, 0.0f), glm::vec2(0.35f, 0.2f),
+		App::renderer().getTexture("Assets/texture/anim2.png"), "second labelll", 0.67f,
+		glm::vec3(0.01f, 0.01f, 0.01f), ASC_ALIGN_CENTER, ASC_ALIGN_TOP);
+	UI_.addCmpt(label2_);
+
 	return true;
 }
 
@@ -18,73 +26,34 @@ void TestScene1::enter(Scene& prev) {
 }
 
 void TestScene1::draw() {
-	App::renderer().submit(anims_);
-	App::renderer().submit(s_);
-	App::renderer().submit("Hello World!!!", glm::vec3(0.0f, 0.0f, 0.2f),
-		glm::vec4(0.0f, 0.0f, 300.0f, 100.0f), 0.5f, glm::vec3(1.0f, 1.0f, 0.0f),
-		App::renderer().getFont("Assets/font/arial.ttf"), ASC_ALIGN_CENTER, ASC_ALIGN_CENTER);
+	UI_.draw();
 }
 
 bool TestScene1::processInput() {
-	if (App::input().isMouseBtnPressed(ASC_MB_LEFT)) {
-		glm::vec2 mp = App::input().getMousePos(App::renderer().getShader().getCamera());
-		anims_.push_back(Animation());
-		ASCLOG(TS1, Info, "Added animation.");
-		anims_.back().init(glm::vec3(mp.x, mp.y, 0.0f), glm::vec2(50.0f, 70.0f),
-			App::renderer().getTexture("Assets/texture/anim1.png"), glm::ivec2(3, 2), 30.0f);
-		anims_.back().play();
+	if (App::input().isKeyPressed(ASC_KEY_A)) {
+		App::window().setDims(glm::ivec2(1000, 400));
 	}
-	if (App::input().isMouseBtnPressed(ASC_MB_RIGHT)) {
-		glm::vec2 mp = App::input().getMousePos(App::renderer().getShader().getCamera());
-		anims_.push_back(Animation());
-		anims_.back().init(glm::vec3(mp.x, mp.y, 0.1f), glm::vec2(90.0f, 25.0f),
-			App::renderer().getTexture("Assets/texture/anim2.png"), glm::ivec2(4, 1), 50.0f);
-		anims_.back().play();
-	}
-
-	if (App::input().isKeyDown(ASC_KEY_D)) {
-		App::renderer().getShader().getCamera().vel.x = 5.0f;
-	}
-	else if (App::input().isKeyDown(ASC_KEY_A)) {
-		App::renderer().getShader().getCamera().vel.x = -5.0f;
-	}
-	else {
-		App::renderer().getShader().getCamera().vel.x = 0.0f;
-	}
-	if (App::input().isKeyDown(ASC_KEY_W)) {
-		App::renderer().getShader().getCamera().vel.y = 5.0f;
-	}
-	else if (App::input().isKeyDown(ASC_KEY_S)) {
-		App::renderer().getShader().getCamera().vel.y = -5.0f;
-	}
-	else {
-		App::renderer().getShader().getCamera().vel.y = 0.0f;
-	}
-	if (App::input().isKeyDown(ASC_KEY_E)) {
-		App::renderer().getShader().getCamera().scaleVel = 0.1f;
-	}
-	else if (App::input().isKeyDown(ASC_KEY_F)) {
-		App::renderer().getShader().getCamera().scaleVel = -0.1f;
-	}
-	else {
-		App::renderer().getShader().getCamera().scaleVel = 0.0f;
+	if (App::input().isKeyPressed(ASC_KEY_S)) {
+		App::window().setDims(glm::ivec2(800, 600));
 	}
 
 	if (App::input().isKeyPressed(ASC_KEY_2)) {
 		App::SetScene(SandBox::TS2);
 	}
+	UI_.processInput();
 	return true;
 }
 
-void TestScene1::cmpEvent(int gID, int cID, int eID) {
+void TestScene1::msgReceived(NetMsg& msg) {
+
+}
+
+void TestScene1::cmptEvent(unsigned int gID, unsigned int cID, unsigned int eID) {
 
 }
 
 void TestScene1::update(float dt) {
-	for (Animation& a : anims_) {
-		a.update(dt);
-	}
-	s_.update(dt);
+	UI_.update(dt);
 }
 
 void TestScene1::leave(Scene& next) {
@@ -93,10 +62,7 @@ void TestScene1::leave(Scene& next) {
 
 void TestScene1::destroy() {
 	ASCLOG(TS, Info, "Destroying test scene 1.");
-	for (Animation& a : anims_) {
-		a.destroy();
-	}
-	anims_.clear();
+	UI_.destroy();
 }
 
 TestScene1 SandBox::TS1;

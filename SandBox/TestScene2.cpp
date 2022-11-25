@@ -26,7 +26,11 @@ bool TestScene2::processInput() {
 	return true;
 }
 
-void TestScene2::cmpEvent(int gID, int cID, int eID) {
+void TestScene2::msgReceived(NetMsg& msg) {
+
+}
+
+void TestScene2::cmptEvent(unsigned int gID, unsigned int cID, unsigned int eID) {
 
 }
 

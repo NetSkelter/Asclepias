@@ -17,14 +17,16 @@ public:
 	void enter(Scene&) override;
 	void draw() override;
 	bool processInput() override;
-	void cmpEvent(int, int, int) override;
+	void msgReceived(NetMsg&) override;
+	void cmptEvent(unsigned int, unsigned int, unsigned int) override;
 	void update(float) override;
 	void leave(Scene&) override;
 	void destroy() override;
 
 private:
-	std::vector<Animation> anims_;
-	Sprite s_;
+	UIGroup UI_;
+	Label label1_;
+	Label label2_;
 };
 
 class TestScene2 : public Scene {
@@ -33,7 +35,8 @@ public:
 	void enter(Scene&) override;
 	void draw() override;
 	bool processInput() override;
-	void cmpEvent(int, int, int) override;
+	void msgReceived(NetMsg&) override;
+	void cmptEvent(unsigned int, unsigned int, unsigned int) override;
 	void update(float) override;
 	void leave(Scene&) override;
 	void destroy() override;

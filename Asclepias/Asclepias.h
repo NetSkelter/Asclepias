@@ -13,18 +13,21 @@
 #include "Input.h"
 #include "Audio.h"
 #include "Networking.h"
+#include "UI.h"
 
 namespace ASC {
 	class Scene : public InputLstr {
 	protected:
 		friend class App;
+		friend class UIGroup;
 		
 		bool initScene();
 		virtual bool init() = 0;
 		virtual void enter(Scene&) = 0;
 		virtual void draw() = 0;
 		virtual bool processInput() = 0;
-		virtual void cmpEvent(int, int, int) = 0;
+		virtual void msgReceived(NetMsg&) = 0;
+		virtual void cmptEvent(unsigned int, unsigned int, unsigned int) = 0;
 		virtual void update(float) = 0;
 		virtual void leave(Scene&) = 0;
 		virtual void destroy() = 0;

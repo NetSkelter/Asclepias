@@ -103,6 +103,10 @@ namespace ASC {
 			if (!inst_->scene_->processInput()) {
 				break;
 			}
+			while (!inst_->network_.getMsgs().empty()) {
+				NetMsg msg = inst_->network_.getMsgs().popFront();
+				inst_->scene_->msgReceived(msg);
+			}
 
 			now = glfwGetTime();
 			elapsed = now - start;
