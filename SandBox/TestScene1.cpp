@@ -20,27 +20,40 @@ void TestScene1::draw() {
 }
 
 bool TestScene1::processInput() {
-	if (App::input().isMouseBtnPressed(ASC_MB_LEFT)) {
-		App::audio().playEffect("Assets/audio/effect1.wav");
-	}
-	if (App::input().isMouseBtnPressed(ASC_MB_RIGHT)) {
-		App::audio().playEffect("Assets/audio/effect2.wav");
-	}
 	if (App::input().isKeyPressed(ASC_KEY_A)) {
-		App::audio().playMusic("Assets/audio/music1.wav");
+		App::network().connect("127.0.0.1", 2773);
 	}
 	if (App::input().isKeyPressed(ASC_KEY_S)) {
-		App::audio().playMusic("Assets/audio/music2.wav");
+		App::network().disconnect();
 	}
-	if (App::input().isKeyPressed(ASC_KEY_D)) {
-		App::audio().playMusic();
+	if (App::input().isMouseBtnPressed(ASC_MB_LEFT)) {
+		NetMsg msg(0);
+		msg << App::input().getMousePos().x << App::input().getMousePos().y;
+		App::network().send(msg);
 	}
-	if (App::input().isKeyPressed(ASC_KEY_F)) {
-		App::audio().pauseMusic();
+	if (App::input().isMouseBtnPressed(ASC_MB_RIGHT)) {
+		NetMsg msg(1);
+		msg << glfwGetTime();
+		App::network().send(msg);
 	}
-	if (App::input().isKeyPressed(ASC_KEY_G)) {
-		App::audio().stopMusic();
+
+	while (!App::network().getMsgs().empty()) {
+		NetMsg msg = App::network().getMsgs().popFront();
+		switch (msg.header.type) {
+		case ASC_NET_CONNECTED:
+			ASCLOG(TS1, Info, "Connected to server.");
+			break;
+		case ASC_NET_FAILED:
+			ASCLOG(TS1, Info, "Failed to connect to server.");
+			break;
+		case ASC_NET_DISCONNECTED:
+			ASCLOG(TS1, Info, "Disconnected from server.");
+			break;
+		default:
+			ASCLOG(TS1, Info, "Received message ", msg, ".");
+		}
 	}
+
 	if (App::input().isKeyPressed(ASC_KEY_2)) {
 		App::SetScene(SandBox::TS2);
 	}

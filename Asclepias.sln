@@ -8,6 +8,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandBox", "SandBox\SandBox.vcxproj", "{34735FCF-93C4-486B-99C6-AC4C155B4215}"
 	ProjectSection(ProjectDependencies) = postProject
 		{61EEF44A-085E-4762-9414-5D894806695A} = {61EEF44A-085E-4762-9414-5D894806695A}
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C} = {B4ED5C58-66EE-4E08-8317-3F8DED279F0C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandBoxSrv", "SandBoxSrv\SandBoxSrv.vcxproj", "{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{61EEF44A-085E-4762-9414-5D894806695A} = {61EEF44A-085E-4762-9414-5D894806695A}
 	EndProjectSection
 EndProject
 Global
@@ -34,6 +40,14 @@ Global
 		{34735FCF-93C4-486B-99C6-AC4C155B4215}.Release|x64.Build.0 = Release|x64
 		{34735FCF-93C4-486B-99C6-AC4C155B4215}.Release|x86.ActiveCfg = Release|Win32
 		{34735FCF-93C4-486B-99C6-AC4C155B4215}.Release|x86.Build.0 = Release|Win32
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Debug|x64.ActiveCfg = Debug|x64
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Debug|x64.Build.0 = Debug|x64
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Debug|x86.ActiveCfg = Debug|Win32
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Debug|x86.Build.0 = Debug|Win32
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Release|x64.ActiveCfg = Release|x64
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Release|x64.Build.0 = Release|x64
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Release|x86.ActiveCfg = Release|Win32
+		{B4ED5C58-66EE-4E08-8317-3F8DED279F0C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

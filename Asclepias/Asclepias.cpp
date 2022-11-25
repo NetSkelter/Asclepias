@@ -48,6 +48,9 @@ namespace ASC {
 		inst_->audio_.init(conf.audio.volume);
 		ASCLOG(App, Info, "Initialized audio manager.");
 
+		inst_->network_.init();
+		ASCLOG(App, Info, "Initialize network client.");
+
 		inst_->scene_ = &conf.startScene;
 		return true;
 	}
@@ -92,6 +95,9 @@ namespace ASC {
 		}
 		inst_->scenes_.clear();
 		inst_->scene_ = 0;
+
+		ASCLOG(App, Info, "Destroying network client.");
+		inst_->network_.destroy();
 
 		ASCLOG(App, Info, "Destroying audio manager.");
 		inst_->audio_.destroy();
