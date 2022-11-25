@@ -136,6 +136,7 @@ namespace ASC {
 		inline const glm::vec2& getMousePos() const {
 			return mousePos_.first;
 		}
+		glm::vec2 getMousePos(const Camera&) const;
 		bool isMouseBtnDown(int) const;
 		inline bool isMouseBtnPressed(int btn) const {
 			return isMouseBtnDown(btn) && !wasMouseBtnDown(btn);

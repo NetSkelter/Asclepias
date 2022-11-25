@@ -8,6 +8,8 @@
 
 bool TestScene1::init() {
 	ASCLOG(TS1, Info, "Initializing test scene 1.");
+	s_.init(glm::vec3(0.0f, 0.0f, -0.1f), glm::vec2(100.0f, 100.0f),
+		App::renderer().getTexture("Assets/texture/player.png"));
 	return true;
 }
 
@@ -16,42 +18,72 @@ void TestScene1::enter(Scene& prev) {
 }
 
 void TestScene1::draw() {
-
+	App::renderer().submit(anims_);
+	App::renderer().submit(s_);
 }
 
 bool TestScene1::processInput() {
-	if (App::input().isKeyPressed(ASC_KEY_A)) {
-		App::network().connect("127.0.0.1", 2773);
-	}
-	if (App::input().isKeyPressed(ASC_KEY_S)) {
-		App::network().disconnect();
-	}
 	if (App::input().isMouseBtnPressed(ASC_MB_LEFT)) {
-		NetMsg msg(0);
-		msg << App::input().getMousePos().x << App::input().getMousePos().y;
-		App::network().send(msg);
+		glm::vec2 mp = App::input().getMousePos(App::renderer().getShader().getCamera());
+		anims_.push_back(Animation());
+		ASCLOG(TS1, Info, "Added animation.");
+		anims_.back().init(glm::vec3(mp.x, mp.y, 0.0f), glm::vec2(50.0f, 70.0f),
+			App::renderer().getTexture("Assets/texture/anim1.png"), glm::ivec2(3, 2), 30.0f);
+		anims_.back().play();
 	}
 	if (App::input().isMouseBtnPressed(ASC_MB_RIGHT)) {
-		NetMsg msg(1);
-		msg << glfwGetTime();
-		App::network().send(msg);
+		glm::vec2 mp = App::input().getMousePos(App::renderer().getShader().getCamera());
+		anims_.push_back(Animation());
+		anims_.back().init(glm::vec3(mp.x, mp.y, 0.1f), glm::vec2(90.0f, 25.0f),
+			App::renderer().getTexture("Assets/texture/anim2.png"), glm::ivec2(4, 1), 50.0f);
+		anims_.back().play();
 	}
 
-	while (!App::network().getMsgs().empty()) {
-		NetMsg msg = App::network().getMsgs().popFront();
-		switch (msg.header.type) {
-		case ASC_NET_CONNECTED:
-			ASCLOG(TS1, Info, "Connected to server.");
-			break;
-		case ASC_NET_FAILED:
-			ASCLOG(TS1, Info, "Failed to connect to server.");
-			break;
-		case ASC_NET_DISCONNECTED:
-			ASCLOG(TS1, Info, "Disconnected from server.");
-			break;
-		default:
-			ASCLOG(TS1, Info, "Received message ", msg, ".");
-		}
+	if (App::input().isKeyDown(ASC_KEY_D)) {
+		App::renderer().getShader().getCamera().vel.x = 5.0f;
+	}
+	else if (App::input().isKeyDown(ASC_KEY_A)) {
+		App::renderer().getShader().getCamera().vel.x = -5.0f;
+	}
+	else {
+		App::renderer().getShader().getCamera().vel.x = 0.0f;
+	}
+	if (App::input().isKeyDown(ASC_KEY_W)) {
+		App::renderer().getShader().getCamera().vel.y = 5.0f;
+	}
+	else if (App::input().isKeyDown(ASC_KEY_S)) {
+		App::renderer().getShader().getCamera().vel.y = -5.0f;
+	}
+	else {
+		App::renderer().getShader().getCamera().vel.y = 0.0f;
+	}
+	if (App::input().isKeyDown(ASC_KEY_E)) {
+		App::renderer().getShader().getCamera().scaleVel = 0.1f;
+	}
+	else if (App::input().isKeyDown(ASC_KEY_F)) {
+		App::renderer().getShader().getCamera().scaleVel = -0.1f;
+	}
+	else {
+		App::renderer().getShader().getCamera().scaleVel = 0.0f;
+	}
+
+	if (App::input().isKeyDown(ASC_CTL_RIGHT)) {
+		s_.vel.x = 2.0f;
+	}
+	else if (App::input().isKeyDown(ASC_CTL_LEFT)) {
+		s_.vel.x = -2.0f;
+	}
+	else {
+		s_.vel.x = 0.0f;
+	}
+	if (App::input().isKeyDown(ASC_CTL_UP)) {
+		s_.vel.y = 2.0f;
+	}
+	else if (App::input().isKeyDown(ASC_CTL_DOWN)) {
+		s_.vel.y = -2.0f;
+	}
+	else {
+		s_.vel.y = 0.0f;
 	}
 
 	if (App::input().isKeyPressed(ASC_KEY_2)) {
@@ -65,7 +97,10 @@ void TestScene1::cmpEvent(int gID, int cID, int eID) {
 }
 
 void TestScene1::update(float dt) {
-
+	for (Animation& a : anims_) {
+		a.update(dt);
+	}
+	s_.update(dt);
 }
 
 void TestScene1::leave(Scene& next) {
@@ -74,6 +109,10 @@ void TestScene1::leave(Scene& next) {
 
 void TestScene1::destroy() {
 	ASCLOG(TS, Info, "Destroying test scene 1.");
+	for (Animation& a : anims_) {
+		a.destroy();
+	}
+	anims_.clear();
 }
 
 TestScene1 SandBox::TS1;

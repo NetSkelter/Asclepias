@@ -51,6 +51,15 @@ namespace ASC {
 		inst_->network_.init();
 		ASCLOG(App, Info, "Initialize network client.");
 
+		if (!inst_->renderer_.init(conf.graphics.clearColor)) {
+			ASCLOG(App, Error, "Failed to initialize renderer.");
+			return false;
+		}
+		ASCLOG(App, Info, "Initialized OpenGL renderer.");
+
+		inst_->targetUPS_ = conf.physics.targetUPS;
+		inst_->maxUPF_ = conf.physics.maxUPF;
+
 		inst_->scene_ = &conf.startScene;
 		return true;
 	}
@@ -80,11 +89,34 @@ namespace ASC {
 	void App::Run() {
 		SetScene(*inst_->scene_);
 
+		double start = glfwGetTime();
+		double now = glfwGetTime();
+		double elapsed = 0.0;
+		double dt = 0.0;
+		unsigned int updates = 0;
 		while (inst_->window_.update()) {
+			inst_->renderer_.begin();
+			inst_->scene_->draw();
+			inst_->renderer_.end();
+
 			inst_->input_.update();
 			if (!inst_->scene_->processInput()) {
 				break;
 			}
+
+			now = glfwGetTime();
+			elapsed = now - start;
+			start = now;
+			dt = elapsed * inst_->targetUPS_;
+			while (dt > 1.0 && updates < inst_->maxUPF_) {
+				inst_->scene_->update(1.0f);
+				inst_->renderer_.update(1.0f);
+				dt -= 1.0;
+				updates++;
+			}
+			inst_->scene_->update((float)dt);
+			inst_->renderer_.update((float)dt);
+			updates = 0;
 		}
 	}
 
@@ -95,6 +127,9 @@ namespace ASC {
 		}
 		inst_->scenes_.clear();
 		inst_->scene_ = 0;
+
+		ASCLOG(App, Info, "Destroying renderer.");
+		inst_->renderer_.destroy();
 
 		ASCLOG(App, Info, "Destroying network client.");
 		inst_->network_.destroy();

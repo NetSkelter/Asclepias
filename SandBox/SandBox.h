@@ -21,6 +21,10 @@ public:
 	void update(float) override;
 	void leave(Scene&) override;
 	void destroy() override;
+
+private:
+	std::vector<Animation> anims_;
+	Sprite s_;
 };
 
 class TestScene2 : public Scene {

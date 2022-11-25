@@ -146,6 +146,17 @@ namespace ASC {
 		mouseVisible_ = visible;
 	}
 
+	glm::vec2 InputMgr::getMousePos(const Camera& cam) const {
+		glm::vec2 mp = getMousePos();
+		glm::vec2 wd((float)App::window().getDims().x, (float)App::window().getDims().y);
+		mp.x -= wd.x / 2.0f;
+		mp.y -= wd.y / 2.0f;
+		mp /= cam.scale;
+		mp.x += cam.pos.x;
+		mp.y += cam.pos.y;
+		return mp;
+	}
+
 	bool InputMgr::isMouseBtnDown(int btn) const {
 		if (mouseBtns_.find(btn) == mouseBtns_.end()) {
 			return false;
