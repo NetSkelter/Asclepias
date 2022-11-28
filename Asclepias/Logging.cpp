@@ -7,6 +7,8 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define LogMgr functions.
+
 	void LogMgr::init(bool console, const std::vector<std::string>& fileNames,
 		const std::string& timestampFmt) {
 		console_ = console;

@@ -7,10 +7,14 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define NetMsg functions.
+
 	NetMsg::NetMsg(unsigned int type, NetConnPtr owner) {
 		header.type = type;
 		this->owner = owner;
 	}
+
+	// Define NetConn functions.
 
 	void NetConn::init(TSQueue<NetMsg>& msgsIn) {
 		msgsIn_ = &msgsIn;
@@ -187,6 +191,8 @@ namespace ASC {
 		);
 	}
 
+	// Define NetClient functions.
+
 	void NetClient::init() {
 		connection_ = std::make_shared<NetConn>(context_, socket_);
 		connection_->init(msgs_);
@@ -233,6 +239,8 @@ namespace ASC {
 		connection_.reset();
 		msgs_.clear();
 	}
+
+	// Define NetServer functions.
 
 	bool NetServer::init() {
 		log_.init(true, { "ASCSRV.log" }, "%Y.%m.%d.%H%M.%S");

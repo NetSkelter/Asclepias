@@ -7,6 +7,8 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define WindowMgr functions.
+
 	bool WindowMgr::init(const glm::ivec2& dims, const std::string& title, bool fullscreen) {
 		if (window_ != 0) {
 			ASCLOG(Window, Warning, "Window already initialized.");

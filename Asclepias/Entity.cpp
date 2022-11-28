@@ -9,6 +9,8 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define Camera functions.
+
 	void Camera::operator = (const Camera& c) {
 		pos = c.pos;
 		vel = c.vel;
@@ -42,6 +44,8 @@ namespace ASC {
 			glm::vec3(-pos.x + wd.x / 2.0f, -pos.y + wd.y / 2.0f, 0.0f));
 		matrix_ = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, 0.0f)) * matrix_;
 	}
+
+	// Define Sprite functions.
 
 	std::vector<unsigned int> Sprite::Indices = { 0, 1, 2, 2, 3, 0 };
 
@@ -168,6 +172,8 @@ namespace ASC {
 		float ry = sin(a) * (p.x - c.x) + cos(a) * (p.y - c.y) + c.y;
 		return glm::vec3(rx, ry, p.z);
 	}
+
+	// Define Animation functions.
 
 	void Animation::init(const glm::vec3& pos, const glm::vec2& dims, const GLuint texture,
 		const glm::ivec2& frameDims, float frameTime) {

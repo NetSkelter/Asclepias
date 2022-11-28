@@ -7,6 +7,8 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define AudioMgr functions.
+	
 	bool AudioMgr::init(float volume) {
 		if (audio_.init() != SoLoud::SO_NO_ERROR) {
 			ASCLOG(Audio, Error, "Failed to initialize SoLoud library.");

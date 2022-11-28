@@ -7,6 +7,8 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define Scene functions.
+
 	bool Scene::initScene() {
 		if (initialized_) {
 			return true;
@@ -22,6 +24,8 @@ namespace ASC {
 		initialized_ = false;
 		destroy();
 	}
+
+	// Define App functions.
 
 	App::Config::Config(Scene& scene) : startScene(scene) {}
 

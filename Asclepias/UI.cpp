@@ -7,6 +7,8 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define UIGroup functions.
+
 	void UIGroup::init(Scene& parent, unsigned int ID, Shader& shader, const Font& font) {
 		parent_ = &parent;
 		ID_ = ID;
@@ -127,6 +129,8 @@ namespace ASC {
 		}
 	}
 
+	// Define Label functions.
+
 	void Label::init(const glm::vec3& pos, const glm::vec2& dims, const GLuint texture,
 		const std::string& text, float textScale, const glm::vec3& textColor, Alignment hAlign,
 		Alignment vAlign) {
@@ -179,6 +183,12 @@ namespace ASC {
 			hAlign_, vAlign_, parent_->getShader());
 	}
 
+	/*
+	* Determine whether a 2D point is inside a rectangle.
+	* @param const glm::vec2& p: The point to test (x, y).
+	* @param const glm::vec4& r: The rectangle to test (x, y, w, h).
+	* @return Whether the point p lies inside the rectangle r.
+	*/
 	bool InRect(const glm::vec2& p, const glm::vec4& r) {
 		if (p.x < r.x || p.x > r.x + r.z) {
 			return false;
@@ -188,6 +198,8 @@ namespace ASC {
 		}
 		return true;
 	}
+
+	// Define Button functions.
 
 	glm::vec4 Button::UNSELECTED_COORDS = glm::vec4(0.0f, 0.0f, 1.0f / 3.0f, 1.0f);
 	glm::vec4 Button::SELECTED_COORDS = glm::vec4(1.0f / 3.0f, 0.0f, 1.0f / 3.0f, 1.0f);
@@ -264,6 +276,8 @@ namespace ASC {
 			setClicked(false);
 		}
 	}
+
+	// Define Switch functions.
 
 	glm::vec4 Switch::OFF_COORDS = glm::vec4(0.0f, 0.0f, 1.0f / 2.0f, 1.0f);
 	glm::vec4 Switch::ON_COORDS = glm::vec4(1.0f / 2.0f, 0.0f, 1.0f / 2.0f, 1.0f);
@@ -404,6 +418,8 @@ namespace ASC {
 			bgSprite_.pos.y, bgSprite_.pos.z + 0.1f);
 		cursor_.dims.y = bgSprite_.dims.y;
 	}
+
+	// Define Cycle functions.
 
 	void Cycle::init(const glm::vec3& pos, const glm::vec2& dims, const GLuint texture,
 		const GLuint buttonTexture, const std::vector<std::string>& values, const std::string& labelText,
@@ -614,6 +630,8 @@ namespace ASC {
 		prevB_.update(dt);
 		nextB_.update(dt);
 	}
+
+	// Define TextBox functions.
 
 	glm::vec4 TextBox::UNSELECTED_COORDS = glm::vec4(0.0f, 0.0f, 1.0f / 2.0f, 1.0f);
 	glm::vec4 TextBox::SELECTED_COORDS = glm::vec4(1.0f / 2.0f, 0.0f, 1.0f / 2.0f, 1.0f);

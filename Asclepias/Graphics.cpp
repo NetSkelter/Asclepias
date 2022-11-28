@@ -8,11 +8,15 @@
 
 #include "Asclepias.h"
 
+// Reference to picoPNG's decodePNG function.
+
 extern int decodePNG(std::vector<unsigned char>& out_image, unsigned long& image_width,
 	unsigned long& image_height, const unsigned char* in_png, size_t in_size,
 	bool convert_to_rgba32 = true);
 
 namespace ASC {
+	// Define Shader functions.
+
 	void Shader::operator = (const Shader& s) {
 		ID_ = s.ID_;
 		attributes_.clear();
@@ -111,6 +115,8 @@ namespace ASC {
 		stride_ = 0;
 		cameraUniform_ = "";
 	}
+
+	// Define Renderer functions.
 
 	GLuint Renderer::NO_TEXTURE = 0;
 	Font Renderer::NO_FONT;
@@ -250,6 +256,12 @@ namespace ASC {
 		submit(text, pos, bounds, scale, color, font, hAlign, vAlign, defaultShader_);
 	}
 
+	/*
+	* Compare two sprite structures by their depth.
+	* @param const std::pair<Shader*, Sprite*>& a: The first sprite to test.
+	* @param const std::pair<Shader*, Sprite*>& b: The second sprite to test.
+	* @return Whether sprite a's depth is less then sprite b's.
+	*/
 	bool cmp_sprite_depth(const std::pair<Shader*, Sprite*>& a, const std::pair<Shader*, Sprite*>& b) {
 		if (a.second == 0 || b.second == 0) {
 			return false;

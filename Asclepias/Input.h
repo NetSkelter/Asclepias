@@ -11,8 +11,10 @@
 #include <vector>
 
 #include "Windowing.h"
+#include "Networking.h"
 
 namespace ASC {
+	// Wrappers for all GLFW input codes.
 	enum InputCodes {
 		ASC_UNKNOWN = GLFW_KEY_UNKNOWN,
 
@@ -92,105 +94,373 @@ namespace ASC {
 		ASC_CA_LAST = GLFW_GAMEPAD_AXIS_LAST,
 	};
 
+	// Abstract interface for user input callbacks.
 	class InputLstr {
 	public:
+		/*
+		* A keyboard key has been pressed.
+		* @param int key: The key ID.
+		*/
 		virtual void keyPressed(int) {}
+		/*
+		* A keyboard key has been released.
+		* @param int key: The key ID.
+		*/
 		virtual void keyReleased(int) {}
+		/*
+		* A character has been typed on the keyboard.
+		* @param char c: The character.
+		*/
 		virtual void charTyped(char) {}
+		/*
+		* The mouse cursor has moved on the window.
+		* @param const glm::vec2& mp: The new mouse position.
+		*/
 		virtual void mouseMoved(const glm::vec2&) {}
+		/*
+		* A mouse button has been pressed.
+		* @param int btn: The button ID.
+		*/
 		virtual void mouseBtnPressed(int) {}
+		/*
+		* A mouse button has been released.
+		* @param int btn: The button ID.
+		*/
 		virtual void mouseBtnReleased(int) {}
+		/*
+		* The mouse scroll wheel has moved.
+		* @param const glm::vec2& scroll: The scroll distance.
+		*/
 		virtual void mouseScrolled(const glm::vec2&) {}
+		/*
+		* A game controller has connected.
+		* @param int ctrl: The controller ID.
+		*/
 		virtual void ctrlConnected(int) {}
+		/*
+		* A game controller has disconnected.
+		* @param int ctrl: The controller ID.
+		*/
 		virtual void ctrlDisconnected(int) {}
+		/*
+		* A game controller button has been pressed.
+		* @param int ctrl: The controller ID.
+		* @param int btn: The button ID.
+		*/
 		virtual void ctrlBtnPressed(int, int) {}
+		/*
+		* A game controller button has been released.
+		* @param int ctrl: The controller ID.
+		* @param int btn: The button ID.
+		*/
 		virtual void ctrlBtnReleased(int, int) {}
+		/*
+		* A game controller axis has moved.
+		* @param int ctrl: The controller ID.
+		* @param int axis: The axis ID.
+		* @param float pos: The new position of the axis.
+		*/
 		virtual void ctrlAxisMoved(int, int, float) {}
 	};
 
+	// App utility for managing user input from keyboard, mouse and controllers.
 	class InputMgr {
 	public:
+		/*
+		* Initialize this input manager's memory and set up GLFW callbacks.
+		*/
 		void init();
+		/*
+		* Update this input manager's logic and state.
+		*/
 		void update();
+		/*
+		* Add an input listener to this input manager.
+		* @param InputLstr& lstr: The listener to add.
+		* @return Whether the listener could be added.
+		*/
 		bool addLstr(InputLstr&);
+		/*
+		* Remove an input listener from this input manager.
+		* @param InputLstr& lstr: The listener to remove.
+		* @return Whether the listener could be removed.
+		*/
 		bool removeLstr(InputLstr&);
+		/*
+		* Free this input manager's memory.
+		*/
 		void destroy();
+		/*
+		* Determine whether a keyboard key is down.
+		* @param int key: The key ID to test.
+		* @return Whether the key is currently down.
+		*/
 		bool isKeyDown(int) const;
+		/*
+		* Determine whether a keyboard key has just been pressed.
+		* @param int key: The key ID to test.
+		* @return Whether the key has been pressed.
+		*/
 		inline bool isKeyPressed(int key) const {
 			return isKeyDown(key) && !wasKeyDown(key);
 		}
+		/*
+		* Determine whether a keyboard key has just been released.
+		* @param int key: The key ID to test.
+		* @return Whether the key has been released.
+		*/
 		inline bool isKeyReleased(int key) const {
 			return !isKeyDown(key) && wasKeyDown(key);
 		}
+		/*
+		* @return Whether the mouse cursor is enabled on the window.
+		*/
 		inline bool isMouseEnabled() const {
 			return mouseEnabled_;
 		}
+		/*
+		* @param bool enabled: Whether the mouse cursor is enabled on the window.
+		*/
 		void setMouseEnabled(bool);
+		/*
+		* @return Whether the mouse cursor is visible on the window.
+		*/
 		inline bool isMouseVisible() const {
 			return mouseVisible_;
 		}
+		/*
+		* @param bool visible: Whether the mouse cursor is visible on the window.
+		*/
 		void setMouseVisible(bool);
+		/*
+		* @return Whether the mouse has moved on the window since the last update.
+		*/
 		inline bool isMouseMoved() const {
 			return mousePos_.first != mousePos_.second;
 		}
+		/*
+		* @return The current poition of the mouse cursor on the window.
+		*/
 		inline const glm::vec2& getMousePos() const {
 			return mousePos_.first;
 		}
+		/*
+		* Get the mouse's position in the 2D coordinate set of a camera.
+		* @param const Camera& cam: The camera to project the mouse position through.
+		* @return The current mouse position in the cam's 2D world.
+		*/
 		glm::vec2 getMousePos(const Camera&) const;
+		/*
+		* Determine whether a mouse button is currently down.
+		* @param int btn: The button ID to test.
+		* @return Whether the btn is currently down.
+		*/
 		bool isMouseBtnDown(int) const;
+		/*
+		* Determine whether a mouse button has just been pressed.
+		* @param int btn: The button ID to test.
+		* @return Whether the button has been pressed.
+		*/
 		inline bool isMouseBtnPressed(int btn) const {
 			return isMouseBtnDown(btn) && !wasMouseBtnDown(btn);
 		}
+		/*
+		* Determine whether a mouse button has just been released.
+		* @param int btn: The button ID to test.
+		* @return Whether the button has been released.
+		*/
 		inline bool isMouseBtnReleased(int btn) const {
 			return !isMouseBtnDown(btn) && wasMouseBtnDown(btn);
 		}
+		/*
+		* @return Whether the mouse scroll wheel has moved since the last update.
+		*/
 		inline bool isMouseScrolled() const {
 			return (mouseScroll_.first != mouseScroll_.second)
 				&& (mouseScroll_.first != glm::vec2(0.0f, 0.0f));
 		}
+		/*
+		* @return The current scroll distance of the mouse for this update.
+		*/
 		inline const glm::vec2& getMouseScroll() const {
 			return mouseScroll_.first;
 		}
+		/*
+		* @return The set of IDs of all currently connected game controllers.
+		*/
 		std::vector<int> getCtrlIDs() const;
+		/*
+		* Determine whether a game controller is connected.
+		* @param int ctrl: The controller ID to test.
+		* @return Whether the ctrl is connected.
+		*/
 		bool isCtrlConnected(int) const;
+		/*
+		* Determine whether a game controller button is currently down.
+		* @param int ctrl: The controller ID to test.
+		* @param int btn: The button ID to test.
+		* @return Whether the controller button is down.
+		*/
 		bool isCtrlBtnDown(int, int) const;
+		/*
+		* Determine whether a game controller button has just been pressed.
+		* @param int ctrl: The controller ID to test.
+		* @param int btn: The button ID to test.
+		* @return Whether the controller button has been pressed.
+		*/
 		inline bool isCtrlBtnPressed(int ctrl, int btn) const {
 			return isCtrlBtnDown(ctrl, btn) && !wasCtrlBtnDown(ctrl, btn);
 		}
+		/*
+		* Determine whether a game controller button has just been released.
+		* @param int ctrl: The controller ID to test.
+		* @param int btn: The button ID to test.
+		* @return Whether the controller button has been released.
+		*/
 		inline bool isCtrlBtnReleased(int ctrl, int btn) const {
 			return !isCtrlBtnDown(ctrl, btn) && wasCtrlBtnDown(ctrl, btn);
 		}
+		/*
+		* Determine whether a game controller axis has moved since last update.
+		* @param int ctrl: The controller ID to test.
+		* @param int axis: The axis ID to test.
+		* @return Whether the controller axis has moved.
+		*/
 		bool isCtrlAxisMoved(int, int) const;
+		/*
+		* Get the current position of a game controller axis.
+		* @param int ctrl: The controller ID to test.
+		* @param int axis: The axis ID to test.
+		* @return The current controller axis position.
+		*/
 		float getCtrlAxisPos(int, int) const;
 
 	private:
+		// The set of input listeners currently receiving callbacks.
 		std::vector<InputLstr*> lstrs_;
+		// Set of key IDs mapped to their current and previous states.
 		std::map<int, std::pair<bool, bool>> keys_;
+		// Whether the mouse cursor is enabled on the window.
 		bool mouseEnabled_ = true;
+		// Whether the mouse cursor is visible on the window.
 		bool mouseVisible_ = true;
+		// Current and previous position of the mouse cursor on the window.
 		std::pair<glm::vec2, glm::vec2> mousePos_;
+		// Set of mouse button IDs mapped to their current and previous states.
 		std::map<int, std::pair<bool, bool>> mouseBtns_;
+		// Current and previous position of the mouse scroll wheel.
 		std::pair<glm::vec2, glm::vec2> mouseScroll_;
+		// Set of game controller IDs to their current and previous states.
 		std::map<int, std::pair<GLFWgamepadstate, GLFWgamepadstate>> ctrls_;
-		std::vector<int> removedCtrls_;
+		// Set of game controllers to remove from memory on the next update.
+		TSQueue<int> removedCtrls_;
 
+		/*
+		* Determine whether a keyboard key was down in the last update.
+		* @param int key: The key ID to test.
+		* @return Whether the key was down.
+		*/
 		bool wasKeyDown(int) const;
+		/*
+		* Determine whether a mouse button was down in the last update.
+		* @param int btn: The button ID to test.
+		* @return Whether the button was down.
+		*/
 		bool wasMouseBtnDown(int) const;
+		/*
+		* Determine whether a game controller button was down in the last update.
+		* @param int ctrl: The controller ID to test.
+		* @param int btn: The button ID to test.
+		* @return Whether the button was down.
+		*/
 		bool wasCtrlBtnDown(int, int) const;
+		/*
+		* Set a keyboard key's current state to pressed.
+		* @param int key: The key to press.
+		*/
 		void pressKey(int);
+		/*
+		* Set a keyboard key's current state to released.
+		* @param int key: The key to release.
+		*/
 		void releaseKey(int);
+		/*
+		* Notify input listeners of a character typed on the keyboard.
+		* @param char c: The character typed.
+		*/
 		void typeChar(char);
+		/*
+		* Change the mouse cursor's current position and notify input listeners.
+		* @param const glm::vec2& mp: The new position of the mouse.
+		*/
 		void moveMouse(const glm::vec2&);
+		/*
+		* Set a mouse button's current state to pressed.
+		* @param int btn: The button to press.
+		*/
 		void pressMouseBtn(int);
+		/*
+		* Set a mouse button's current state to released.
+		* @param int btn: The button to release.
+		*/
 		void releaseMouseBtn(int);
+		/*
+		* Change the mouse scroll wheel's current position and notify input listeners.
+		* @param const glm::vec2& scroll: The new scroll position.
+		*/
 		void scrollMouse(const glm::vec2&);
+		/*
+		* Connect a game controller.
+		* @param int ctrl: The controller ID.
+		*/
 		void connectCtrl(int);
+		/*
+		* Disconnect a game controller.
+		* @param int ctrl: The controller ID.
+		*/
 		void disconnectCtrl(int);
+		/*
+		* GLFW callback for keyboard key events.
+		* @param GLFWwindow* window: The GLFW window handle to listen on.
+		* @param int key: The key ID.
+		* @param int scancode: The scancode of the keyboard key.
+		* @param int action: The key's new state.
+		* @param int mods: Modifier bits on the key event.
+		*/
 		static void KeyEvent(GLFWwindow*, int, int, int, int);
+		/*
+		* GLFW callback for keyboard typing events.
+		* @param GLFWwindow* window: The GLFW window handle to listen on.
+		* @param unsigned int codepoint: The ASCII character typed.
+		*/
 		static void CharEvent(GLFWwindow*, unsigned int);
+		/*
+		* GLFW callback for mouse cursor movement events.
+		* @param GLFWwindow* window: The GLFW window handle to listen on.
+		* @param double x: The new x-coordinate of the mouse on the window.
+		* @param double y: The new y-coordinate of the mouse on the window.
+		*/
 		static void MousePosEvent(GLFWwindow*, double, double);
+		/*
+		* GLFW callback for mouse button events.
+		* @param GLFWwindow* window: The GLFW window handle to listen on.
+		* @param int button: The button ID.
+		* @param int action: The new state of the button.
+		* @param int mods: Modifier bits on the button event.
+		*/
 		static void MouseBtnEvent(GLFWwindow*, int, int, int);
+		/*
+		* GLFW callback for mouse scroll events.
+		* @param GLFWwindow* window: The GLFW window handle to listen on.
+		* @param double x: The scroll wheel's x distance.
+		* @param double y: The scroll wheel's y distance.
+		*/
 		static void MouseScrollEvent(GLFWwindow*, double, double);
+		/*
+		* GLFW callback for game controller connection events.
+		* @param int jid: The GLFW joystick ID for the controller.
+		* @param int event: The type of controller event, connect / disconnect.
+		*/
 		static void CtrlEvent(int, int);
 	};
 }

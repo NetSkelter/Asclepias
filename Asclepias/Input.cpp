@@ -7,6 +7,8 @@
 #include "Asclepias.h"
 
 namespace ASC {
+	// Define InputMgr functions.
+
 	void InputMgr::init() {
 		glfwSetKeyCallback(App::window().window_, KeyEvent);
 		glfwSetCharCallback(App::window().window_, CharEvent);
@@ -40,7 +42,7 @@ namespace ASC {
 		glfwPollEvents();
 		while (!removedCtrls_.empty()) {
 			int rc = removedCtrls_.back();
-			removedCtrls_.pop_back();
+			removedCtrls_.popBack();
 			std::map<int, std::pair<GLFWgamepadstate, GLFWgamepadstate>>::iterator it = ctrls_.find(rc);
 			if (it != ctrls_.end()) {
 				ctrls_.erase(it);
@@ -326,7 +328,7 @@ namespace ASC {
 		for (InputLstr* lstr : lstrs_) {
 			lstr->ctrlDisconnected(ctrl);
 		}
-		removedCtrls_.push_back(ctrl);
+		removedCtrls_.pushBack(ctrl);
 	}
 
 	void InputMgr::KeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods) {
