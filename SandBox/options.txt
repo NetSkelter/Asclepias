@@ -1,0 +1,6 @@
+window_dims:1080x720
+fullscreen:false
+volume:1
+username:Asclepias
+address:127.0.0.1
+port:2773

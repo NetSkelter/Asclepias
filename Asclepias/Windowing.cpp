@@ -21,15 +21,21 @@ namespace ASC {
 		ASCLOG(Window, Info, "Initialized GLFW library.");
 		monitor_ = glfwGetPrimaryMonitor();
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		window_ = glfwCreateWindow(dims.x, dims.y, title.c_str(), 0, 0);
+		if (!fullscreen) {
+			window_ = glfwCreateWindow(dims.x, dims.y, title.c_str(), 0, 0);
+		}
+		else {
+			const GLFWvidmode* vm = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			window_ = glfwCreateWindow(vm->width, vm->height, title.c_str(), monitor_, 0);
+		}
 		if (!window_) {
 			ASCLOG(Window, Error, "Failed to open GLFW window.");
 			return false;
 		}
 		ASCLOG(Window, Info, "Created GLFW window.");
+		setFullscreen(fullscreen);
 		setDims(dims);
 		setTitle(title);
-		setFullscreen(fullscreen);
 		glfwMakeContextCurrent(window_);
 		center();
 		return true;

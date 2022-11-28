@@ -146,8 +146,8 @@
     <ClInclude Include="SandBox.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestScene1.cpp" />
-    <ClCompile Include="TestScene2.cpp" />
+    <ClCompile Include="Title.cpp" />
+    <ClCompile Include="Options.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

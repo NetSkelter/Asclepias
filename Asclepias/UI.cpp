@@ -427,7 +427,7 @@ namespace ASC {
 		const glm::vec3& textColor, Alignment hAlign, Alignment vAlign, Alignment bAlign,
 		Alignment lAlign, Alignment lHAlign, Alignment lVAlign) {
 		this->Label::init(pos, dims, texture, (values.empty() ? "" : values.at(0)), textScale,
-			textColor, lHAlign, lVAlign);
+			textColor, hAlign, vAlign);
 		bAlign_ = bAlign;
 		values_ = values;
 		if (values_.empty()) {
@@ -763,7 +763,7 @@ namespace ASC {
 				}
 			}
 			else {
-				if (selected_ && !App::input().isMouseBtnDown(ASC_MB_LEFT)) {
+				if (selected_ && App::input().isMouseBtnPressed(ASC_MB_LEFT)) {
 					selected_ = false;
 					bgSprite_.textureRect = UNSELECTED_COORDS;
 					parent_->cmptEvent(ID_, UNSELECTED_EVENT);
