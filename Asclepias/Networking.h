@@ -86,6 +86,9 @@ namespace ASC {
 				std::memcpy(msg.body.data() + s, &data, sizeof(T));
 				msg.header.size = (unsigned int)msg.body.size();
 			}
+			else {
+				std::cout << "Failed to write non-standard layout to netmsg." << std::endl;
+			}
 			return msg;
 		}
 		/*
@@ -101,6 +104,9 @@ namespace ASC {
 				std::memcpy(&data, msg.body.data() + s, sizeof(T));
 				msg.body.resize(s);
 				msg.header.size = (unsigned int)msg.body.size();
+			}
+			else {
+				std::cout << "Failed to read non-standard layout from netmsg." << std::endl;
 			}
 			return msg;
 		}

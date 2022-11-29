@@ -39,7 +39,13 @@ bool Title::processInput() {
 }
 
 void Title::msgReceived(NetMsg& msg) {
-	
+	if (msg.header.type == ASC_NET_CONNECTED) {
+		ASCLOG(Title, Info, "Connected to game server.");
+		App::SetScene(SandBox::GAME_SCENE);
+	}
+	else if (msg.header.type == ASC_NET_FAILED) {
+		ASCLOG(Title, Info, "Failed to connect to game server.");
+	}
 }
 
 void Title::cmptEvent(unsigned int gID, unsigned int cID, unsigned int eID) {
@@ -80,6 +86,7 @@ void Title::destroy() {
 
 Title SandBox::TITLE_SCENE;
 Options SandBox::OPTIONS_SCENE;
+Game SandBox::GAME_SCENE;
 Font& SandBox::FONT = Renderer::NO_FONT;
 float SandBox::TEXT_SCALE = 0.5f;
 glm::vec3 SandBox::TEXT_COLOR = glm::vec3(1.0f, 1.0f, 0.0f);
@@ -94,7 +101,7 @@ GLuint SandBox::BOX_TEX;
 
 int main(int argc, char** argv) {
 	Options::LoadOptions();
-	App::Config conf(SandBox::OPTIONS_SCENE);
+	App::Config conf(SandBox::TITLE_SCENE);
 	conf.window.dims = Options::WINDOW_DIMS;
 	conf.window.fullscreen = Options::FULLSCREEN;
 	conf.audio.volume = Options::VOLUME;

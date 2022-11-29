@@ -68,10 +68,30 @@ private:
 	void saveOptions();
 };
 
+class Game : public Scene {
+public:
+	bool init() override;
+	void enter(Scene&) override;
+	void draw() override;
+	bool processInput() override;
+	void msgReceived(NetMsg&) override;
+	void cmptEvent(unsigned int, unsigned int, unsigned int) override;
+	void update(float) override;
+	void leave(Scene&) override;
+	void destroy() override;
+
+private:
+	Sprite player_;
+	std::vector<Sprite> others_;
+
+	std::array<char, 20> convertUsername(const std::string&);
+};
+
 class SandBox {
 public:
 	static Title TITLE_SCENE;
 	static Options OPTIONS_SCENE;
+	static Game GAME_SCENE;
 	static Font& FONT;
 	static float TEXT_SCALE;
 	static glm::vec3 TEXT_COLOR;

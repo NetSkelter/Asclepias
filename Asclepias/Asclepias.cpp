@@ -125,6 +125,8 @@ namespace ASC {
 			inst_->scene_->update((float)dt);
 			inst_->renderer_.update((float)dt);
 			updates = 0;
+
+			Sleep(1);
 		}
 	}
 

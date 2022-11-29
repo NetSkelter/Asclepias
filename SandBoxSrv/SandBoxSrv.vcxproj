@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MsgTypes.h" />
     <ClInclude Include="SandBoxSrv.h" />
   </ItemGroup>
   <ItemGroup>
