@@ -30,7 +30,6 @@ protected:
 private:
 	std::vector<Player> players_;
 
-	void assignUsername(unsigned int, const std::string&);
 	std::array<char, 20> convertUsername(const std::string&);
 };
 

@@ -23,33 +23,30 @@ void SandBoxSrv::msgReceived(NetMsg& msg) {
 		std::array<char, 20> usrbuf;
 		msg >> usrbuf;
 		std::string username(usrbuf.data());
-		assignUsername(msg.owner->getID(), username);
+		Player np;
+		np.ID = msg.owner->getID();
+		np.username = username;
+		players_.push_back(np);
+		NetMsg idmsg(ID_ASSIGN);
+		idmsg << np.ID << convertUsername(np.username);
+		sendAll(idmsg);
+		NSLOG(SBS, Info, "Sent ID assignment.");
+		if (players_.size() > 1) {
+			NetMsg listmsg(PLAYER_LIST);
+			for (Player& pl : players_) {
+				if (pl.ID != np.ID) {
+					listmsg << pl.ID << convertUsername(pl.username);
+				}
+			}
+			send(listmsg, msg.owner);
+			NSLOG(SBS, Info, "Sent player list.");
+		}
 	}
 }
 
 void SandBoxSrv::clientDisconnected(NetConnPtr client) {
 	NSLOG(SBS, Info, "Client ", client->getID(), " disconnected.");
-}
 
-void SandBoxSrv::assignUsername(unsigned int ID, const std::string& username) {
-	NSLOG(SBS, Info, "Player ", ID, " assigned username ", username, ".");
-	Player p;
-	p.ID = ID;
-	p.username = username;
-	players_.push_back(p);
-	NetMsg idmsg(ID_ASSIGN);
-	idmsg << ID << convertUsername(username);
-	sendAll(idmsg);
-	if (players_.size() > 1) {
-		NSLOG(SBS, Info, "Players already connected, sending list message.");
-		NetMsg listmsg(PLAYER_LIST);
-		for (Player& p : players_) {
-			if (p.ID != ID) {
-				listmsg << p.ID << convertUsername(p.username);
-			}
-		}
-		send(listmsg, getClientByID(ID));
-	}
 }
 
 std::array<char, 20> SandBoxSrv::convertUsername(const std::string& username) {

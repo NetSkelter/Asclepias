@@ -23,12 +23,17 @@ void Game::draw() {
 }
 
 bool Game::processInput() {
+	if (App::input().isKeyPressed(ASC_CTL_ESC)) {
+		App::network().disconnect();
+		App::SetScene(SandBox::TITLE_SCENE);
+	}
 	return true;
 }
 
 void Game::msgReceived(NetMsg& msg) {
 	if (msg.header.type == ASC_NET_DISCONNECTED) {
-		destroyScene();
+		ASCLOG(Game, Info, "Disconnect message received.");
+		destroy();
 		App::SetScene(SandBox::TITLE_SCENE);
 	}
 	else if (msg.header.type == ID_ASSIGN) {

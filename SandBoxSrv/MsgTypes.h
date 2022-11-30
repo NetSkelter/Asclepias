@@ -8,8 +8,8 @@
 #define SBS_MSG_TYPES_H
 
 enum MsgTypes {
-	USERNAME_ASSIGN,
 	ID_ASSIGN,
+	USERNAME_ASSIGN,
 	PLAYER_LIST,
 };
 

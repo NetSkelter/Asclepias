@@ -52,6 +52,9 @@ namespace ASC {
 		if (!socket_.is_open()) {
 			connected_ = false;
 		}
+		else {
+			connected_ = true;
+		}
 		return connected_;
 	}
 
@@ -144,6 +147,9 @@ namespace ASC {
 
 	void NetConn::addMsg() {
 		msgsIn_->pushBack(tmpMsg_);
+		tmpMsg_.header.type = 0;
+		tmpMsg_.header.size = 0;
+		tmpMsg_.body.clear();
 		readHeader();
 	}
 
@@ -199,18 +205,25 @@ namespace ASC {
 	}
 
 	void NetClient::connect(const std::string& addr, unsigned short port) {
+		std::cout << "Connecting to " << addr << ":" << port << "." << std::endl;
 		disconnect();
+		std::cout << "Attempting connection." << std::endl;
 		try {
 			asio::ip::tcp::resolver resolver(context_);
+			std::cout << "Set up resolver." << std::endl;
 			asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(addr, std::to_string(port));
+			std::cout << "Retrieved endpoints." << std::endl;
 			connection_->connectToServer(endpoints);
+			std::cout << "Connected connection to server." << std::endl;
 			asioThread_ = std::thread(
 				[this]() {
 					context_.run();
 				}
 			);
+			std::cout << "Started thread." << std::endl;
 		}
 		catch (std::exception&) {
+			std::cout << "Exception hit." << std::endl;
 			disconnect();
 		}
 	}
@@ -225,10 +238,15 @@ namespace ASC {
 	}
 
 	void NetClient::disconnect() {
+		std::cout << "Disconnecting." << std::endl;
 		connection_->disconnect();
+		std::cout << "Disconnected connection." << std::endl;
 		context_.stop();
+		std::cout << "Stopped context." << std::endl;
 		context_.reset();
+		std::cout << "Reset context." << std::endl;
 		if (asioThread_.joinable()) {
+			std::cout << "Stopping thread." << std::endl;
 			asioThread_.join();
 		}
 	}

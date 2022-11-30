@@ -211,7 +211,7 @@ namespace ASC {
 		*/
 		void pushBack(const T& e) {
 			std::scoped_lock(mtx_);
-			dequeue_.emplace_front(std::move(e));
+			dequeue_.emplace_back(std::move(e));
 		}
 
 	private:

@@ -42,9 +42,15 @@ void Title::msgReceived(NetMsg& msg) {
 	if (msg.header.type == ASC_NET_CONNECTED) {
 		ASCLOG(Title, Info, "Connected to game server.");
 		App::SetScene(SandBox::GAME_SCENE);
+		mainUI_.setEnabled(true);
 	}
 	else if (msg.header.type == ASC_NET_FAILED) {
 		ASCLOG(Title, Info, "Failed to connect to game server.");
+		mainUI_.setEnabled(true);
+	}
+	else if (msg.header.type == ASC_NET_DISCONNECTED) {
+		ASCLOG(Title, Info, "Disconnected message.");
+		mainUI_.setEnabled(true);
 	}
 }
 
@@ -53,6 +59,7 @@ void Title::cmptEvent(unsigned int gID, unsigned int cID, unsigned int eID) {
 		if (cID == playBtn_.getID()) {
 			if (eID == Button::CLICKED_EVENT) {
 				App::network().connect(Options::ADDRESS, Options::PORT);
+				mainUI_.setEnabled(false);
 			}
 		}
 		else if (cID == optionsBtn_.getID()) {
